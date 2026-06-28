@@ -29,17 +29,50 @@ def add_tasks(tasks, newtask) :
     tasks.append(newtask)
 
 def display_tasks(tasks) :
-        for task in tasks :
-            print(task["task"] + " - " + task["status"])
+    for position, task in enumerate(tasks) :
+        print(str(position) + " - " + task["task"] + " - " + task["status"])
+
+def complete_task(tasks, index) : 
+    try : 
+        tasks[index]["status"] = "complete"
+    except IndexError :
+        print("Invalid position within current list of tasks")
+    except TypeError :
+        print("Requires numerical input")        
+
+def delete_task(tasks, index) :
+    try :
+        tasks.pop(index)
+    except IndexError :
+        print("Invalid position within current list of tasks")
+    except TypeError : 
+        print("Requires numerical input")
 
 
-
+#need user input for inqex queries
 filename = input("Enter filename: ")
 tasks = load_tasks(filename)
 newtask = input() #integrate sec
 while True :
         
+#Options : 
+#"load" Lets you load tasks from your file or if left
+#                     blank generates a fresh file to add tasks to.
 
+#"list" Lists current tasks, their number, and completion status 
+#                     in order. Note that unsaved tasks will appear as well. 
+
+#"add" Adds a custom task and assumes it incomplete.
+#                          Tasks added this way will require them to be saved to persist.
+
+#"save" Adds tasks made with add_tasks to the file.
+#                            Call this at the end of each session.
+
+#"complete" Changes tasks to being complete. 
+#                            Requires you enter task number.
+
+#"delete" Removes a task. Requires you enter task number.
+#
 
       
     
