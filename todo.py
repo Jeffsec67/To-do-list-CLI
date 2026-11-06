@@ -97,6 +97,10 @@ while True:
     command = input("\nEnter command: ")
 
     if command == "quit":
+        if unsaved_changes : 
+            force = input("Warning - Unsaved changes detected. Are you sure you want to quit? (y/n): ")
+            if force.lower() != 'y' :
+                continue
         break
 
     elif command == "load":
@@ -124,7 +128,7 @@ while True:
 
     elif command == "complete":
         index = input("Enter Task number: ")
-        if index.isdigit():
+        if index.isdigit() and 0 < int(index) <= len(tasks):
             success = complete_task(tasks, int(index))
             if success:
                 unsaved_changes = True
@@ -133,7 +137,7 @@ while True:
 
     elif command == "delete":
         index = input("Enter task number: ")
-        if index.isdigit():
+        if index.isdigit() and 0 < int(index) <= len(tasks):
             success = delete_task(tasks, int(index))
             if success:
                 unsaved_changes = True
