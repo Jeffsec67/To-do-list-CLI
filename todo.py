@@ -13,10 +13,6 @@ def load_tasks(filename="tasks.json"):
     if not isinstance(tlist, list):
         tlist = list()
     return tlist
-#Creates a load tasks function which lets you import your own existing file by name or if lef blank 
-# will generate a fresh one, opens the file in read mode and makes a list in json format of the files
-# content, and each line is a dictionary, and if the file couldnt be found or couldnt be converted 
-# into json format it will return an empty list.
 
 def save_tasks(tasks, filename):
     try:
@@ -24,20 +20,14 @@ def save_tasks(tasks, filename):
             json.dump(tasks, f)
     except OSError:
         print("File error- check path or permissions")
-#Appends the file with contents of the dynamic list of tasks with write mode of json and using the 
-# 'dump' functionality
 
 def add_tasks(tasks, newtask):
     newtask = {"task": newtask, "status": "incomplete"}
     tasks.append(newtask)
-#This function just creates the add a task in general framework, configuration and 
-# customization of the task is from another function. It also makes the task template.
 
 def display_tasks(tasks):
     for position, task in enumerate(tasks, start=1):
         print(str(position) + " - " + task["task"] + " - " + task["status"])
-#Puts current task list into a numbered list, then prints position or number for each task
-# as well as what the task is and its status.
 
 def complete_task(tasks, index):
     try:
@@ -53,11 +43,6 @@ def complete_task(tasks, index):
         print("Requires numerical input")
         return False
 
-#Dont remember the index syntax much but I believe its how you parse and interact with
-# specific objects of a dictionary, but this function just changes a tasks status to 
-# complete, it accounts for trying to index over a task that doesnt exist and
-# trying to enter a task number with something other than a number.
-
 def delete_task(tasks, index):
     try:
         tasks.pop(index)
@@ -68,8 +53,6 @@ def delete_task(tasks, index):
     except TypeError:
         print("Requires numerical input")
         return False
-#Deletes a task completely by using pop. the list of tasks where you enter the task number, it 
-# accounts for the same errors as the previous function.
 
 unsaved_changes = False
 
