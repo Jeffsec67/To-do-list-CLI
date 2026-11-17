@@ -34,24 +34,25 @@ def add_tasks(tasks, newtask):
 # customization of the task is from another function. It also makes the task template.
 
 def display_tasks(tasks):
-    for position, task in enumerate(tasks):
+    for position, task in enumerate(tasks, start=1):
         print(str(position) + " - " + task["task"] + " - " + task["status"])
 #Puts current task list into a numbered list, then prints position or number for each task
 # as well as what the task is and its status.
 
 def complete_task(tasks, index):
     try:
+        if tasks[index]["status"] == "complete":
+            print("Task already complete")
+            return False
         tasks[index]["status"] = "complete"
-        success = True
-        return success
+        return True
     except IndexError:
         print("Invalid position within current list of tasks")
-        success = False
-        return success
+        return False
     except TypeError:
         print("Requires numerical input")
-        success = False
-        return success
+        return False
+
 #Dont remember the index syntax much but I believe its how you parse and interact with
 # specific objects of a dictionary, but this function just changes a tasks status to 
 # complete, it accounts for trying to index over a task that doesnt exist and
@@ -60,29 +61,59 @@ def complete_task(tasks, index):
 def delete_task(tasks, index):
     try:
         tasks.pop(index)
-        success = True
-        return success
+        return True
     except IndexError:
         print("Invalid position within current list of tasks")
-        success = False
-        return success
+        return False
     except TypeError:
         print("Requires numerical input")
-        success = False
-        return success
+        return False
 #Deletes a task completely by using pop. the list of tasks where you enter the task number, it 
 # accounts for the same errors as the previous function.
 
 unsaved_changes = False
 
-filename = input("Enter filename: ")
-if "/" in filename or "\\" in filename : 
-    print("Warning: Invalid characters detected. Defaulting to tasks.json")
-    filename = "tasks.json"
-elif not filename:
-    filename = "tasks.json"
+def handle_add(tasks) :
+    newtask = input("Enter new task name: ").replace("\n"," ").replace("\r", " ")
+    if len(newtask) <= 75 and newtask.strip():
+        add_tasks(tasks, newtask)
+        return True
+    else :
+        print("75 Character limit")
+        return False
 
-tasks = load_tasks(filename)
+def handle_complete(tasks) :
+    index = input("Enter Task number: ")
+    if index.isdigit() and 0 < int(index) <= len(tasks):
+        return complete_task(tasks, int(index) - 1)
+    else:
+        print("Must be task number")
+        return False
+
+def handle_delete(tasks) :
+    index = input("Enter task number: ")
+    if index.isdigit() and 0 < int(index) <= len(tasks):
+        return delete_task(tasks, int(index) - 1)
+    else :
+        print("Must be task number")
+        return False
+    
+def handle_load() :
+    filename = input("Enter new filename: ").strip()
+    if not filename : 
+        filename = "tasks.json"
+        print("No filename entered, Defaulting to tasks.json")
+    elif len(filename) > 75 : 
+        print("75 character limit, Defaulting to tasks.json")
+        filename = "tasks.json"
+    elif "/" in filename or "\\" in filename :
+        print("Warning: Invalid characters detected Defaulting to tasks.json")
+        filename = "tasks.json"
+    tasks = load_tasks(filename)
+    return tasks, filename
+
+print("Booting CLI...")
+tasks, filename = handle_load() 
 
 while True:
     print("\nOptions :")
@@ -104,45 +135,27 @@ while True:
         break
 
     elif command == "load":
-        filename = input("Enter new filename: ")
-        if "/" in filename or "\\" in filename :
-            print("Warning: Invalid characters detected Defaulting to tasks.json")
-            filename = "tasks.json"
-        tasks = load_tasks(filename)
+        tasks, filename = handle_load()
     
 
     elif command == "list":
         display_tasks(tasks)
 
     elif command == "add":
-        newtask = input("Enter new task name: ")
-        if len(newtask) <= 75 and newtask.strip():
-            add_tasks(tasks, newtask)
+        if handle_add(tasks) :
             unsaved_changes = True
-        else:
-            print("75 character limit")
 
     elif command == "save":
         save_tasks(tasks, filename)
         unsaved_changes = False
 
     elif command == "complete":
-        index = input("Enter Task number: ")
-        if index.isdigit() and 0 < int(index) <= len(tasks):
-            success = complete_task(tasks, int(index))
-            if success:
-                unsaved_changes = True
-        else:
-            print("Must be task number")
+        if handle_complete(tasks) :
+            unsaved_changes = True
 
     elif command == "delete":
-        index = input("Enter task number: ")
-        if index.isdigit() and 0 < int(index) <= len(tasks):
-            success = delete_task(tasks, int(index))
-            if success:
-                unsaved_changes = True
-        else:
-            print("Must be task number")
+        if handle_delete(tasks) :
+            unsaved_changes = True
 
     else:
         print("Select option")
